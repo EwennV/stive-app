@@ -4,6 +4,8 @@
 
 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSDKn3vA2YUbXzN0ZC3gALWJ08gJN-Drl15w&s" width="20" height="20"> [`TailwindCSS`](https://tailwindcss.com/): Un framework CSS utilitaire pour un développement rapide d'interfaces utilisateur modernes.
 
+<img src="https://images.ctfassets.net/ooa29xqb8tix/RrX9HCiZ8qPoIpJSlHphR/f9778b44e2b768d31fafb4ac70956682/vue-logo.png?w=400&q=50" width="20" height="20"> [`Vue.Js`](https://vuejs.org/): Un framework Javascript favorable à l'utilisation de composants et à une programmation moderne.
+
 ## Prérequis
 
 Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre machine :
@@ -18,29 +20,21 @@ npm -v
 ```
 ## Tutoriel d'installation du projet
 
-    Clonez le dépôt sur votre machine locale
+Clonez le dépôt sur votre machine locale via `git clone <repository>`
 
-Initialiser npm
-Si ce n'est pas déjà fait, initialisez npm dans le répertoire du projet :
-
+Déplacez vous dans le projet
 ```bash
-npm init -y
+cd stive-app
 ```
 
-Installez Electron en tant que dépendance de développement :
-
+Installer les dépendances liées au projet.
 ```bash
-npm install electron --save-dev
-```
-
-Installer TailwindCSS et ses dépendances CSS :
-
-```bash
-npm install -D tailwindcss
+npm install
 ```
 
 ## Lancer le projet
 ```bash
+npm run build
 npm run start
 ```
 
@@ -48,7 +42,7 @@ Lancer le watcher de TailwindCSS
 Pour compiler et surveiller les fichiers CSS avec TailwindCSS, exécutez la commande suivante :
 
 ```bash
-npx tailwindcss -i ./app/css/input.css -o ./app/css/output.css --watch
+npx tailwindcss -i ./src/assets/input.css -o ./src/assets/output.css --watch
 ```
 
-Cela va surveiller les changements dans le fichier input.css et générer automatiquement un fichier CSS compilé dans output.css.
+Cela va surveiller les changements de classes css dans les fichiers .html, .js, .ts, ... et générer automatiquement un fichier CSS compilé dans `./src/assets/output.css`.
