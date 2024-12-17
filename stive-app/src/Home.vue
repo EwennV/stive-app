@@ -7,4 +7,5 @@
   <div>
     <Sidebar />
   </div>
+
 </template>
