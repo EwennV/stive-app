@@ -1,23 +1,16 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue';
-import TheWelcome from './components/TheWelcome.vue';
+    import Connexion from './components/ConnexionForm.vue';
+    import Register from './components/RegisterForm.vue';
+    import Products from './components/Products.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-    <h1 class="text-2xl text-green-600">Coucou</h1>
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
   <main>
-    <TheWelcome />
+    <router-view />
   </main>
 </template>
 
-<style scoped>
+<!--<style scoped>
 header {
   line-height: 1.5;
 }
@@ -44,4 +37,4 @@ header {
     flex-wrap: wrap;
   }
 }
-</style>
+</style>-->
