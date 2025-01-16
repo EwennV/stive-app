@@ -1,7 +1,7 @@
 <script setup>
     import TopBar from './TopBar.vue'
     import Products from './Products.vue'
-    import Family from './Family.vue'
+    import Family from './Categories.vue'
     import Orders from './Orders.vue'
     import Inventory from './Inventory.vue'
     import Users from './Users.vue'
@@ -52,10 +52,11 @@
 
 <script>
     import Products from './Products.vue'
-    import Family from './Family.vue'
+    import Family from './Categories.vue'
     import Orders from './Orders.vue'
     import Inventory from './Inventory.vue'
     import Users from './Users.vue'
+    import Clients from './Clients.vue'
 
     export default {
         data() {
@@ -91,6 +92,12 @@
                         name: 'Utilisateurs',
                         path: "M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6",
                         component: Users,
+                        isActive: false,
+                    },
+                    {
+                        name: 'Clients',
+                        path: "M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6",
+                        component: Clients,
                         isActive: false,
                     },
                 ],
