@@ -5,6 +5,7 @@
     import Orders from './Orders.vue'
     import Inventory from './Inventory.vue'
     import Users from './Users.vue'
+    import Suppliers from './Suppliers.vue'
 </script>
 
 <template>
@@ -57,6 +58,7 @@
     import Inventory from './Inventory.vue'
     import Users from './Users.vue'
     import Clients from './Clients.vue'
+    import Suppliers from './Suppliers.vue'
 
     export default {
         data() {
@@ -74,6 +76,12 @@
                         name: 'Famille',
                         path: "M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5",
                         component: Family,
+                        isActive: false,
+                    },
+                    {
+                        name: 'Fournisseur',
+                        path: "M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5",
+                        component: Suppliers,
                         isActive: false,
                     },
                     {
