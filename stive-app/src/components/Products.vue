@@ -14,6 +14,22 @@
                 <h3 class="text-xl font-bold text-pink-800">Produits</h3>
                 <button @click="openModal" class="text-l w-30 bg-green-800 hover:bg-green-700 text-white py-1 px-4 rounded">+ Ajouter</button>
             </div>
+            <div class="flex space-x-4">
+                <div>
+                    <label class="block text-gray-700">Catégorie :</label>
+                    <select @change="filterByCategory" v-model="categoryFilter" class="w-full px-3 py-2 border rounded">
+                        <option :value="0">Toutes</option>
+                        <option v-for="(categ, index) in categories" :value=categ.id>{{ categ.name }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Fournisseur :</label>
+                    <select @change="filterBySupplier" v-model="supplierFilter" class="w-full px-3 py-2 border rounded">
+                        <option :value="0">Tous</option>
+                        <option v-for="(supplier, index) in suppliers" :value=supplier.id>{{ supplier.name }}</option>
+                    </select>
+                </div>
+            </div>
             <table class="w-full my-8">
                 <thead>
                     <tr>
@@ -21,7 +37,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in results" :key="index">
+                    <tr v-for="(item, index) in filtredProducts" :key="index">
                         <td>{{ item.id }}</td>
                         <td>{{ item.reference }}</td>
                         <td>{{ item.name }}</td>
@@ -164,8 +180,11 @@
         data() {
             return {
                 results: [], // Données de l'API
+                filtredProducts: [],
                 suppliers: [],
                 categories: [],
+                categoryFilter: 0,
+                supplierFilter: 0,
                 loading: true, // Indicateur de chargement
                 error: null, // Gestion des erreurs
                 modalType: null,
@@ -193,6 +212,45 @@
             };
         },
         methods: {
+
+            // Filtre par fournisseur
+            filterBySupplier() {
+                this.filtredProducts = [];
+                if (this.supplierFilter === 0) {
+                    this.filtredProducts = this.results;
+                } else {
+                    if (Array.isArray(this.results)) {
+                        for (const product of this.results) {
+                            if (product.supplier.id === this.supplierFilter) {
+                                this.filtredProducts.push(product);
+                            }
+                        }
+                    }
+                }
+                this.categoryFilter = 0;
+            },
+
+            // Filtre par catégorie
+            filterByCategory() {
+                this.filtredProducts = [];
+                if (this.categoryFilter === 0) {
+                    this.filtredProducts = this.results;
+                } else {
+                    if (Array.isArray(this.results)) {
+                        for (const product of this.results) {
+                            if (Array.isArray(product.categories)) {
+                                for (const category of product.categories) {
+                                    if (category.id === this.categoryFilter) {
+                                        this.filtredProducts.push(product);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                this.supplierFilter = 0;
+            },
+
             // Appel API pour récupérer les fournisseurs
             async fetchProducts() {
                 try {
@@ -209,9 +267,12 @@
                     this.loading = false;
                 }
 
+                this.filtredProducts = this.results;
+
                 this.fetchSuppliers();
                 this.fetchCategories();
             },
+
             // Appel API pour récupérer les fournisseurs
             async fetchSuppliers() {
                 try {
