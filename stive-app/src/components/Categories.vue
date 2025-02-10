@@ -1,259 +1,190 @@
 <template>
-    <div>
+    <div class="max-w-5xl mx-auto p-6">
         <!-- Indicateur de chargement -->
-        <div v-if="loading">Chargement des donn&eacute;es...</div>
+        <div v-if="loading" class="text-center text-lg font-semibold text-gray-700">
+            Chargement des donn√©es...
+        </div>
 
         <!-- Affichage des erreurs -->
-        <div v-else-if="error" style="color: red">
+        <div v-else-if="error" class="text-center text-red-600 font-semibold">
             Une erreur est survenue : {{ error }}
         </div>
 
-        <!-- Affichage des donnÈes  chargÈes -->
-        <div v-else class="w9/12">
+        <!-- Affichage des donn√©es charg√©es -->
+        <div v-else>
             <div class="my-6 flex justify-between items-center">
-                <h3 class="text-xl font-bold text-pink-800">Familles</h3>
-                <button @click="openModal" class="text-l w-30 bg-green-800 hover:bg-green-700 text-white py-1 px-4 rounded">+ Ajouter</button>
+                <h3 class="text-2xl font-bold text-pink-800">Familles</h3>
+                <button @click="openModal('add')"
+                    class="flex items-center gap-2 bg-green-700 hover:bg-green-600 text-white py-2 px-5 rounded-lg shadow-md transition">
+                    + Ajouter
+                </button>
             </div>
 
-            <div>
+            <div class="bg-white shadow-lg rounded-lg p-4">
                 <ul>
-                    <!--<li v-for="(item, index) in results" :key="index" v-if="item.name === 'Le bon vin'">-->
-                    <li v-for="(item, index) in filteredResults" :key="item.id">
-                        - {{ item.name }}
-                        <button @click="openModalToUpdateCategory(item)" class="rounded bg-green-800 px-4 py-2 text-white">Modifier</button>
-                        <button @click="confirmDelete(item)" class="rounded bg-red-800 px-4 py-2 text-white">Supprimer</button>
-                        <ul class="px-4">
-                            <li v-for="(itemb, indexb) in getDaughters(item.id)" :key="indexb.id">
-                                - {{ itemb.name }}
-                                <button @click="openModalToUpdateCategory(itemb)" class="rounded bg-green-800 px-4 py-2 text-white">Modifier</button>
-                                <button @click="confirmDelete(itemb)" class="rounded bg-red-800 px-4 py-2 text-white">Supprimer</button>
+                    <li v-for="(item, index) in filteredResults" :key="item.id"
+                        class="border-b border-gray-200 py-4 px-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-900 font-semibold">{{ item.name }}</span>
+                            <div class="flex gap-2">
+                                <button @click="openModal('edit', item)"
+                                    class="rounded-lg bg-green-700 px-4 py-2 text-white shadow-md hover:bg-green-600 transition">
+                                    Modifier
+                                </button>
+                                <button @click="confirmDelete(item)"
+                                    class="rounded-lg bg-red-700 px-4 py-2 text-white shadow-md hover:bg-red-600 transition">
+                                    Supprimer
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Liste des sous-cat√©gories -->
+                        <ul v-if="getDaughters(item.id).length" class="pl-6 mt-2">
+                            <li v-for="(itemb, indexb) in getDaughters(item.id)" :key="indexb"
+                                class="border-l border-gray-300 pl-4 py-2 flex justify-between items-center">
+                                <span class="text-gray-800">{{ itemb.name }}</span>
+                                <div class="flex gap-2">
+                                    <button @click="openModal('edit', itemb)"
+                                        class="rounded-lg bg-green-700 px-4 py-2 text-white shadow-md hover:bg-green-600 transition">
+                                        Modifier
+                                    </button>
+                                    <button @click="confirmDelete(itemb)"
+                                        class="rounded-lg bg-red-700 px-4 py-2 text-white shadow-md hover:bg-red-600 transition">
+                                        Supprimer
+                                    </button>
+                                </div>
                             </li>
                         </ul>
                     </li>
                 </ul>
             </div>
-
         </div>
 
-        <!-- FenÍtre modale commune (create/update) -->
-        <div v-if="modalType" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
-            <div class="bg-white rounded-lg shadow-lg w-1/3 max-h-[90vh] p-6 overflow-auto">
-                <h2 class="text-xl text-pink-800 font-bold mb-4">
+        <!-- Fen√™tre modale commune (ajout/modification) -->
+        <div v-if="modalType"
+            class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+                <h2 class="text-2xl text-pink-800 font-bold mb-4">
                     {{ modalType === 'add' ? 'Ajouter une famille' : 'Modifier une famille' }}
                 </h2>
-                <form @submit.prevent="modalType === 'add' ? createCategory() : updateCategory(newItem)">
-                    <!-- Contenu du formulaire -->
+                <form @submit.prevent="modalType === 'add' ? createCategory() : updateCategory()">
                     <div class="mb-4">
-                        <label class="block text-gray-700">Nom :</label>
-                        <input v-model="newItem.name" type="text" class="w-full px-3 py-2 border rounded" placeholder="Nom" required />
+                        <label class="block text-gray-700 font-medium">Nom :</label>
+                        <input v-model="newItem.name" type="text"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            placeholder="Nom" required />
                     </div>
                     <div class="mb-4">
-                        <label class="block text-gray-700">Famille mËre :</label>
-                        <select v-model="newItem.categoryParentId" class="w-full px-3 py-2 border rounded">
+                        <label class="block text-gray-700 font-medium">Famille m√®re :</label>
+                        <select v-model="newItem.categoryParentId"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
                             <option :value="0">Aucune</option>
-                            <option v-for="(item, index) in results" :key="item.id" :value="item.id">{{ item.name }}</option>
+                            <option v-for="(item, index) in filteredResults" :key="item.id" :value="item.id">
+                                {{ item.name }}
+                            </option>
                         </select>
                     </div>
-                    <!-- Autres champs du formulaire -->
-                    <div class="flex justify-end">
-                        <button type="button" @click="closeModal" class="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mr-2">Annuler</button>
-                        <button type="submit" class="bg-green-800 hover:bg-green-700 text-white px-4 py-2 rounded">{{ modalType === 'add' ? 'Ajouter' : 'Modifier' }}</button>
+                    <div class="flex justify-end gap-2">
+                        <button type="button" @click="closeModal"
+                            class="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded-lg shadow-md transition">
+                            Annuler
+                        </button>
+                        <button type="submit"
+                            class="bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md transition">
+                            {{ modalType === 'add' ? 'Ajouter' : 'Modifier' }}
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- Modale de confirmation pour la suppression -->
-        <div v-if="isConfirmModalOpen" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
-            <div class="bg-white rounded-lg shadow-lg w-1/3 p-6">
+        <div v-if="isConfirmModalOpen"
+            class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
                 <h2 class="text-xl text-red-800 font-bold mb-4">Confirmer la suppression</h2>
-                <p>&Ecirc;tes-vous s&ucirc;r de vouloir supprimer la famille {{ categoryToDelete.name }} ?</p>
-                <div class="flex justify-end mt-4">
-                    <button @click="closeConfirmModal" class="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mr-2">Annuler</button>
-                    <button @click="deleteCategory" class="bg-red-800 hover:bg-red-700 text-white px-4 py-2 rounded">Supprimer</button>
+                <p class="text-gray-700">√ätes-vous s√ªr de vouloir supprimer la famille <span class="font-semibold">{{ categoryToDelete.name }}</span> ?</p>
+                <div class="flex justify-end mt-4 gap-2">
+                    <button @click="closeConfirmModal"
+                        class="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded-lg shadow-md transition">
+                        Annuler
+                    </button>
+                    <button @click="deleteCategory"
+                        class="bg-red-700 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow-md transition">
+                        Supprimer
+                    </button>
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
 <script>
-    import axios from "axios";
-
-    export default {
-         computed: {
-            filteredResults() {
-            return this.results.filter(item => !item.categoryParent);
-         }
+export default {
+    name: "ResultsPage",
+    data() {
+        return {
+            results: [
+                { id: 1, name: "Spiritueux", categoryParent: null },
+                { id: 2, name: "Cognac", categoryParent: { id: 1} },
+                { id: 3, name: "Pineau", categoryParent: { id: 1 } },
+                { id: 4, name: "Vins", categoryParent: null },
+                { id: 5, name: "Ros√©", categoryParent: { id: 4 } },
+                { id: 6, name: "Blanc", categoryParent: { id: 4 } },
+                { id: 7, name: "Rouge", categoryParent: { id: 4 } },
+                { id: 8, name: "M√©doc", categoryParent: { id: 7 } },
+                { id: 9, name: "St √âmilion", categoryParent: { id: 7 } },
+                { id: 10, name: "Entre deux mers", categoryParent: { id: 7 } },
+            ],
+            loading: false,
+            error: null,
+            modalType: null,
+            isConfirmModalOpen: false,
+            categoryToDelete: null,
+            newItem: { name: "", categoryParentId: 0 },
+        }
     },
-        name: "ResultsPage",
-        data() {
-            return {
-                results: [], // DonnÈes de l'API
-                daughters: [],
-                loading: true, // Indicateur de chargement
-                error: null, // Gestion des erreurs
-                modalType: null,
-                isModalOpen: false, // ContrÙle de la fenÍtre modale
-                isConfirmModalOpen: false, // ContrÙle de la fenÍtre de confirmation
-                categoryToDelete: null, // Categorie sÈlectionnÈe pour suppression
-                newItem: {
-                    name: "",
-                    categoryParentId: 0,
-                }, // Nouvelle famille
-            };
-        },
-        methods: {
-            // Ouvrir la modale de confirmation
-        confirmDelete(category) {
-            this.categoryToDelete = category;
-            this.isConfirmModalOpen = true;
-        },
-            // Retourne les objets "fils" d'une catÈgorie donnÈe
+    computed: {
+        filteredResults() {
+            return this.results.filter(item => !item.categoryParent)
+        }
+    },
+    methods: {
         getDaughters(parentId) {
-            return this.results.filter(item => item.categoryParent?.id === parentId);
+            return this.results.filter(item => item.categoryParent?.id === parentId)
         },
-            // Appel API pour rÈcupÈrer les clients
-            async fetchCategories() {
-                try {
-                    const token = localStorage.getItem("authToken");
-                    const response = await fetch("https://localhost:44308/api/Category", {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }).then(r => r.json());
-                    this.results = response;
-                } catch (err) {
-                    this.error = err.message || "Erreur inattendue";
-                } finally {
-                    this.loading = false;
-                }
-            },
-
-            // Ouvrir la modale de confirmation
-            confirmDelete(category) {
-                this.categoryToDelete = category;
-                this.isConfirmModalOpen = true;
-            },
-
-            // Fermer la modale de confirmation
-            closeConfirmModal() {
-                this.categoryToDelete = null;
-                this.isConfirmModalOpen = false;
-            },
-
-            // Supprimer le client
-            async deleteCategory() {
-                console.log(this.categoryToDelete.id);
-                const token = localStorage.getItem("authToken");
-                try {
-                    const response = await fetch(`https://localhost:44308/api/Category/${this.categoryToDelete.id}`, {
-                        method: "DELETE",
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    // RafraÓchir la liste des clients
-                    this.fetchCategories();
-                } catch (err) {
-                    this.error = err.message || "Erreur inattendue lors de la suppression.";
-                } finally {
-                    this.closeConfirmModal();
-                }
-            },
-
-            // Ouvrir la modale
-            openModal() {
-                this.isUpdateModalOpen = false;
-                this.isModalOpen = true;
-            },
-
-            // Fermer la modale
-            closeModal() {
-                this.modalType = false;
-                this.newItem = { name: "", categoryParentId: 0 };
-            },
-
-            // Soumettre le formulaire
-            async createCategory() {
-                const token = localStorage.getItem("authToken");
-                try {
-                    const r = await fetch('https://localhost:44308/api/Category', {
-                        method: 'POST',
-                        headers: {
-                            "Accept": "application/json",
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`,
-                        },
-                        body: JSON.stringify(this.newItem),
-                    });
-
-                    if (!r.ok) {
-                         const errorText = await response.text();
-                         console.error("Erreur HTTP :", response.status, errorText);
-                        throw new Error(`HTTP error! status: ${r.status}`);
-                    }
-                } catch (error) {
-                    // En cas d'erreur, affichez un message d'erreur
-                    this.errorMessage = "Impossible de crÈer la famille.";
-                } finally {
-                    // RÈactivez le bouton aprËs la connexion
-                    this.isLoading = false;
-                    this.closeModal();
-                    this.newItem = { name: "", categoryParentId: 0 };
-                    this.fetchCategories();
-                }
-            },
-
-            openModalToUpdateCategory(category) {
-                this.modalType = 'update'; // Modal de mise ‡ jour
-                this.newItem = { ...category };
-                this.newItem.categoryParentId = category.categoryParent ? category.categoryParent.id : 0;
-            },
-
-            async updateCategory(category) {
-                const token = localStorage.getItem("authToken");
-                try {
-                    const r = await fetch(`https://localhost:44308/api/Category/${category.id}`, {
-                        method: 'PUT',
-                        headers: {
-                            "Accept": "application/json",
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`,
-                        },
-                        body: JSON.stringify(this.newItem)
-                    });
-
-                    if (!r.ok) {
-                        throw new Error(`HTTP error! status: ${r.status}`);
-                    }
-                } catch (error) {
-                    // En cas d'erreur, affichez un message d'erreur
-                    this.errorMessage = "Identifiants incorrects.";
-                } finally {
-                    // RÈactivez le bouton aprËs la connexion
-                    this.isLoading = false;
-                    this.closeModal();
-                    this.newItem = { name: "", categoryParentId: 0 };
-                    this.fetchCategories();
-                }
-            },
-
-            openModal() {
-                this.modalType = 'add'; // Modal d'ajout
-                this.newItem = {
-                    name: "",
-                    categoryParentId: 0,
-                };
+        confirmDelete(category) {
+            this.categoryToDelete = category
+            this.isConfirmModalOpen = true
+        },
+        closeConfirmModal() {
+            this.categoryToDelete = null
+            this.isConfirmModalOpen = false
+        },
+        deleteCategory() {
+            this.results = this.results.filter(item => item.id !== this.categoryToDelete.id)
+            this.closeConfirmModal()
+        },
+        openModal(type, item = null) {
+            this.modalType = type
+            this.newItem = item ? { ...item, categoryParentId: item.categoryParent?.id || 0 } : { name: "", categoryParentId: 0 }
+        },
+        closeModal() {
+            this.modalType = null
+            this.newItem = { name: "", categoryParentId: 0 }
+        },
+        createCategory() {
+            this.results.push({ id: this.results.length + 1, name: this.newItem.name, categoryParent: this.newItem.categoryParentId ? { id: this.newItem.categoryParentId } : null })
+            this.closeModal()
+        },
+        updateCategory() {
+            const category = this.results.find(cat => cat.id === this.newItem.id)
+            if (category) {
+                category.name = this.newItem.name
+                category.categoryParent = this.newItem.categoryParentId ? { id: this.newItem.categoryParentId } : null
             }
-
-        },
-        mounted() {
-            this.fetchCategories();
-        },
-    };
+            this.closeModal()
+        }
+    }
+}
 </script>
