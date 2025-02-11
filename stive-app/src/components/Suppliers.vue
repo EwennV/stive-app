@@ -27,8 +27,7 @@
                         <td>{{ item.siret }}</td>
                         <td>{{ item.address1 }} {{ item.address2 }} {{ item.postalCode }} {{ item.city }}</td>
                         <td>
-                            <div class="flex space-x-2 justify-between">
-                                <button class="rounded bg-blue-600 px-4 py-2 text-white">Voir</button>
+                            <div class="flex space-x-2 justify-center gap-2">
                                 <button @click="openModalToUpdateSupplier(item)" class="rounded bg-green-800 px-4 py-2 text-white">Modifier</button>
                                 <button @click="confirmDelete(item)" class="rounded bg-red-800 px-4 py-2 text-white">Supprimer</button>
                             </div>
