@@ -48,8 +48,7 @@
                         <td>{{ item.supplier.name }}</td>
                         <td>{{ item.quantity }}</td>
                         <td>
-                            <div class="flex space-x-2 justify-between">
-                                <button class="rounded bg-blue-600 px-4 py-2 text-white">Voir</button>
+                            <div class="flex space-x-2 justify-center gap-2">
                                 <button @click="openModalToUpdateProduct(item)" class="rounded bg-green-800 px-4 py-2 text-white">Modifier</button>
                                 <button @click="confirmDelete(item)" class="rounded bg-red-800 px-4 py-2 text-white">Supprimer</button>
                             </div>
