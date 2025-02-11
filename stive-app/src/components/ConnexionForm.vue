@@ -15,6 +15,39 @@
             goToHome() {
                 this.$router.push('/home'); // Navigation vers la page "Home"
             },
+            async askForToken() {
+                const loginData = {
+                    email: this.email,
+                    password: this.password,
+                };
+                try {
+                    const r = await fetch('https://localhost:44308/Auth/login', {
+                        method: 'POST',
+                        headers: {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(loginData)
+                    });
+
+                    if (!r.ok) {
+                        throw new Error(`HTTP error! status: ${r.status}`);
+                    } else {
+                        const data = await r.json();
+                        const token = data.token;
+                        // Sauvegarder le token (dans localStorage par exemple)
+                        localStorage.setItem("authToken", token);
+                        // Orientation vers la page d'accueil
+                        this.goToHome();
+                    }
+                } catch (error) {
+                    // En cas d'erreur, affichez un message d'erreur
+                    this.errorMessage = "Identifiants incorrects.";
+                } finally {
+                    // Réactivez le bouton après la connexion
+                    this.isLoading = false;
+                }
+            },
             async handleLogin() {
                 // Désactive le bouton pendant la connexion
                 this.isLoading = true;
@@ -28,16 +61,15 @@
 
                 try {
                     // Effectuer la requête de connexion
-                    const response = await axios.post("https://localhost:44308/Auth/login", loginData);
+
+                    //const response = await axios.post("https://sewv02.ewenn-vallois.fr/stive/Auth/login", loginData);
+                    const response = await axios.post("https://localhost:44308/Auth/login", loginData); 
 
                     // Si la connexion est réussie, récupérez le jeton
                     const token = response.data.token;
 
                     // Sauvegarder le token (dans localStorage par exemple)
                     localStorage.setItem("authToken", token);
-
-                    // Affichez un message de succès ou effectuez une redirection
-                    alert("Connexion réussie !");
 
                     // Orientation vers la page d'accueil
                     this.goToHome();
@@ -59,7 +91,7 @@
     <div class="flex justify-center mt-16 h-screen w-screen">
         <div class="w-48 max-w-full">
             <h1 class="text-2xl text-pink-800">Connexion</h1>
-            <form @submit.prevent="handleLogin">
+            <form @submit.prevent="askForToken">
                 <div>
                     <div><label for="email">Email :</label></div>
                     <div>
@@ -86,9 +118,6 @@
                         type="submit">Se connecter</button>
                 <div v-if="errorMessage" class="text-red-600 mt-2 text-center">
                     {{ errorMessage }}
-                </div>
-                <div class="mt-1 text-right italic text-xs">
-                    <RouterLink to="/register">Se cr&eacute;er un compte</RouterLink>
                 </div>
             </form>
         </div>

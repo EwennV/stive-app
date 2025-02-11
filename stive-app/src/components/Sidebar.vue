@@ -1,10 +1,11 @@
 <script setup>
     import TopBar from './TopBar.vue'
     import Products from './Products.vue'
-    import Family from './Family.vue'
+    import Family from './Categories.vue'
     import Orders from './Orders.vue'
     import Inventory from './Inventory.vue'
     import Users from './Users.vue'
+    import Suppliers from './Suppliers.vue'
 </script>
 
 <template>
@@ -52,10 +53,12 @@
 
 <script>
     import Products from './Products.vue'
-    import Family from './Family.vue'
+    import Family from './Categories.vue'
     import Orders from './Orders.vue'
     import Inventory from './Inventory.vue'
     import Users from './Users.vue'
+    import Clients from './Clients.vue'
+    import Suppliers from './Suppliers.vue'
 
     export default {
         data() {
@@ -76,6 +79,12 @@
                         isActive: false,
                     },
                     {
+                        name: 'Fournisseur',
+                        path: "M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5",
+                        component: Suppliers,
+                        isActive: false,
+                    },
+                    {
                         name: 'Commande',
                         path: "M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-1.646-7.646-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708",
                         component: Orders,
@@ -91,6 +100,12 @@
                         name: 'Utilisateurs',
                         path: "M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6",
                         component: Users,
+                        isActive: false,
+                    },
+                    {
+                        name: 'Clients',
+                        path: "M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6",
+                        component: Clients,
                         isActive: false,
                     },
                 ],
