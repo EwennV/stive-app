@@ -1,63 +1,76 @@
 <template>
-    <div>
+    <div class="p-6 bg-gray-100 min-h-screen">
         <!-- Indicateur de chargement -->
-        <div v-if="loading">Chargement des donn&eacute;es...</div>
+        <div v-if="loading" class="text-center text-gray-600">Chargement des donn&eacute;es...</div>
 
         <!-- Affichage des erreurs -->
-        <div v-else-if="error" style="color: red">
+        <div v-else-if="error" class="text-center text-red-600 font-semibold">
             Une erreur est survenue : {{ error }}
         </div>
 
-        <!-- Affichage des données  chargées -->
-        <div v-else class="w9/12">
-            <div class="my-6 flex justify-between items-center">
-                <h3 class="text-xl font-bold text-pink-800">Familles</h3>
-                <button @click="openModal" class="text-l w-30 bg-green-800 hover:bg-green-700 text-white py-1 px-4 rounded">+ Ajouter</button>
+        <!-- Affichage des donnÃ©es chargÃ©es -->
+        <div v-else class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+            <div class="mb-6 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-pink-800">Familles</h3>
+                <button @click="openModal"
+                        class="bg-green-600 hover:bg-green-500 text-white py-2 px-6 rounded-lg shadow-md transition">
+                    + Ajouter
+                </button>
             </div>
 
-            <div>
-                <ul>
-                    <!--<li v-for="(item, index) in results" :key="index" v-if="item.name === 'Le bon vin'">-->
-                    <li v-for="(item, index) in filteredResults" :key="item.id">
-                        - {{ item.name }}
-                        <button @click="openModalToUpdateCategory(item)" class="rounded bg-green-800 px-4 py-2 text-white">Modifier</button>
-                        <button @click="confirmDelete(item)" class="rounded bg-red-800 px-4 py-2 text-white">Supprimer</button>
-                        <ul class="px-4">
-                            <li v-for="(itemb, indexb) in getDaughters(item.id)" :key="indexb.id">
-                                - {{ itemb.name }}
-                                <button @click="openModalToUpdateCategory(itemb)" class="rounded bg-green-800 px-4 py-2 text-white">Modifier</button>
-                                <button @click="confirmDelete(itemb)" class="rounded bg-red-800 px-4 py-2 text-white">Supprimer</button>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-
+            <ul class="space-y-4 ml-4 border-l-2 border-gray-400 pl-4">
+                <li v-for="item in filteredResults" :key="item.id" class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <div class="flex justify-start items-center">
+                        <span class="text-gray-800 font-semibold">{{ item.name }}</span>
+                        <div class="space-x-2 ml-4">
+                            <button @click="openModalToUpdateCategory(item)"
+                                    class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1 rounded-md">
+                                Modifier
+                            </button>
+                            <button @click="confirmDelete(item)"
+                                    class="bg-red-600 hover:bg-red-500 text-white px-4 py-1 rounded-md">
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+                    <ul class="ml-6 mt-2 space-y-2 border-l-2 border-gray-400">
+                        <li v-for="itemb in getDaughters(item.id)" :key="itemb.id" class="text-gray-700 ml-4">
+                            - {{ itemb.name }}
+                            <button @click="openModalToUpdateCategory(itemb)"
+                                    class="ml-2 bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-md">
+                                Modifier
+                            </button>
+                            <button @click="confirmDelete(itemb)"
+                                    class="ml-2 bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md">
+                                Supprimer
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
 
-        <!-- Fenêtre modale commune (create/update) -->
+        <!-- Modale (create/update) -->
         <div v-if="modalType" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
-            <div class="bg-white rounded-lg shadow-lg w-1/3 max-h-[90vh] p-6 overflow-auto">
+            <div class="bg-white rounded-lg shadow-lg w-1/3 p-6">
                 <h2 class="text-xl text-pink-800 font-bold mb-4">
                     {{ modalType === 'add' ? 'Ajouter une famille' : 'Modifier une famille' }}
                 </h2>
                 <form @submit.prevent="modalType === 'add' ? createCategory() : updateCategory(newItem)">
-                    <!-- Contenu du formulaire -->
                     <div class="mb-4">
-                        <label class="block text-gray-700">Nom :</label>
-                        <input v-model="newItem.name" type="text" class="w-full px-3 py-2 border rounded" placeholder="Nom" required />
+                        <label class="block text-gray-700 font-semibold">Nom :</label>
+                        <input v-model="newItem.name" type="text" class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-pink-300" placeholder="Nom" required />
                     </div>
                     <div class="mb-4">
-                        <label class="block text-gray-700">Famille mère :</label>
-                        <select v-model="newItem.categoryParentId" class="w-full px-3 py-2 border rounded">
+                        <label class="block text-gray-700 font-semibold">Famille mÃ¨re :</label>
+                        <select v-model="newItem.categoryParentId" class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-pink-300">
                             <option :value="0">Aucune</option>
-                            <option v-for="(item, index) in results" :key="item.id" :value="item.id">{{ item.name }}</option>
+                            <option v-for="item in results" :key="item.id" :value="item.id">{{ item.name }}</option>
                         </select>
                     </div>
-                    <!-- Autres champs du formulaire -->
-                    <div class="flex justify-end">
-                        <button type="button" @click="closeModal" class="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded mr-2">Annuler</button>
-                        <button type="submit" class="bg-green-800 hover:bg-green-700 text-white px-4 py-2 rounded">{{ modalType === 'add' ? 'Ajouter' : 'Modifier' }}</button>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" @click="closeModal" class="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded-lg">Annuler</button>
+                        <button type="submit" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg">{{ modalType === 'add' ? 'Ajouter' : 'Modifier' }}</button>
                     </div>
                 </form>
             </div>
@@ -74,7 +87,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -90,14 +102,14 @@
         name: "ResultsPage",
         data() {
             return {
-                results: [], // Données de l'API
+                results: [], // DonnÃ©es de l'API
                 daughters: [],
                 loading: true, // Indicateur de chargement
                 error: null, // Gestion des erreurs
                 modalType: null,
-                isModalOpen: false, // Contrôle de la fenêtre modale
-                isConfirmModalOpen: false, // Contrôle de la fenêtre de confirmation
-                categoryToDelete: null, // Categorie sélectionnée pour suppression
+                isModalOpen: false, // ContrÃ´le de la fenÃªtre modale
+                isConfirmModalOpen: false, // ContrÃ´le de la fenÃªtre de confirmation
+                categoryToDelete: null, // Categorie sÃ©lectionnÃ©e pour suppression
                 newItem: {
                     name: "",
                     categoryParentId: 0,
@@ -110,11 +122,11 @@
             this.categoryToDelete = category;
             this.isConfirmModalOpen = true;
         },
-            // Retourne les objets "fils" d'une catégorie donnée
+            // Retourne les objets "fils" d'une catÃ©gorie donnÃ©e
         getDaughters(parentId) {
             return this.results.filter(item => item.categoryParent?.id === parentId);
         },
-            // Appel API pour récupérer les clients
+            // Appel API pour rÃ©cupÃ©rer les clients
             async fetchCategories() {
                 try {
                     const token = localStorage.getItem("authToken");
@@ -157,7 +169,7 @@
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    // Rafraîchir la liste des clients
+                    // RafraÃ®chir la liste des clients
                     this.fetchCategories();
                 } catch (err) {
                     this.error = err.message || "Erreur inattendue lors de la suppression.";
@@ -199,9 +211,9 @@
                     }
                 } catch (error) {
                     // En cas d'erreur, affichez un message d'erreur
-                    this.errorMessage = "Impossible de créer la famille.";
+                    this.errorMessage = "Impossible de crÃ©er la famille.";
                 } finally {
-                    // Réactivez le bouton après la connexion
+                    // RÃ©activez le bouton aprÃ¨s la connexion
                     this.isLoading = false;
                     this.closeModal();
                     this.newItem = { name: "", categoryParentId: 0 };
@@ -210,7 +222,7 @@
             },
 
             openModalToUpdateCategory(category) {
-                this.modalType = 'update'; // Modal de mise à jour
+                this.modalType = 'update'; // Modal de mise Ã  jour
                 this.newItem = { ...category };
                 this.newItem.categoryParentId = category.categoryParent ? category.categoryParent.id : 0;
             },
@@ -235,7 +247,7 @@
                     // En cas d'erreur, affichez un message d'erreur
                     this.errorMessage = "Identifiants incorrects.";
                 } finally {
-                    // Réactivez le bouton après la connexion
+                    // RÃ©activez le bouton aprÃ¨s la connexion
                     this.isLoading = false;
                     this.closeModal();
                     this.newItem = { name: "", categoryParentId: 0 };
