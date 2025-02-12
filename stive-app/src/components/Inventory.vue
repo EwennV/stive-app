@@ -20,7 +20,7 @@
                             <th class="border border-gray-200 px-4 py-2 text-left">ID</th>
                             <th class="border border-gray-200 px-4 py-2 text-left">Nom</th>
                             <th class="border border-gray-200 px-4 py-2 text-left">Quantité</th>
-                            <th class="border border-gray-200 px-4 py-2 text-left">Nouvelle Quantité</th>
+                            <th class="border border-gray-200 px-4 py-2 text-left">Nouvelle quantité</th>
                         </tr>
                     </thead>
                     <tbody>
