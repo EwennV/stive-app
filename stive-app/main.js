@@ -5,8 +5,9 @@ let win
 
 function createWindow() {
   win = new BrowserWindow({
-    webPreferences: {
-      preload: path.join(process.cwd(), './preload.js'),
+      webPreferences: {
+          //preload: path.join(__dirname, 'preload.cjs'),
+          preload: path.join(app.getAppPath(), './preload.cjs'),
       nodeIntegration: true
     }
   })
